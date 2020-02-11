@@ -1,0 +1,23 @@
+# Local Kafka development environment setup
+# ref: https://github.com/simplesteph/kafka-stack-docker-compose/blob/master/full-stack.yml
+version: "3"
+
+services:
+  zookeeper:
+    image: zookeeper:3.4.9
+    restart: unless-stopped
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:5.2.1
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
